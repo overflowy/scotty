@@ -10,8 +10,6 @@ from scotty.ui.banner import render_banner
 SCOTTY_FILENAMES = [
     "Scotty.sh",
     "scotty.sh",
-    "Envoy.sh",
-    "envoy.sh",
 ]
 
 

@@ -1,8 +1,9 @@
 [project]
 name = "scotty"
 version = "0.1.0"
-description = "Add your description here"
+description = "A beautiful SSH task runner (Python port of spatie/scotty)"
 readme = "README.md"
+license = { file = "LICENSE" }
 authors = [
     { name = "overflowy", email = "overflowy@riseup.net" }
 ]
