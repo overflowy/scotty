@@ -14,7 +14,6 @@ from scotty.parsing.parse_result import ParseResult
 from scotty.ui import output as out
 from scotty.ui.spinner import Spinner
 
-
 TRACE_MARKER = "ENVOY_TRACE:"
 
 COLORS = ["yellow", "cyan", "magenta", "blue", "green"]
@@ -40,7 +39,6 @@ def handle_run(args, file_path: str, parser, dynamic_options: dict[str, str]) ->
 
     show_summary_only = args.summary
     pretend = args.pretend
-    total_steps = len(tasks)
 
     server_colors: dict[str, str] = {}
     color_index = 0
@@ -240,10 +238,7 @@ def handle_run(args, file_path: str, parser, dynamic_options: dict[str, str]) ->
         servers = ", ".join(task.servers)
         parallel_str = " \033[36mparallel\033[0m" if task.parallel else ""
 
-        is_remote = any(
-            (srv := config.get_server(s)) and not srv.is_local()
-            for s in task.servers
-        )
+        is_remote = any((srv := config.get_server(s)) and not srv.is_local() for s in task.servers)
         dot = "\033[33m●\033[0m" if is_remote else "\033[34m●\033[0m"
 
         spinner.clear_line()
@@ -279,8 +274,7 @@ def handle_run(args, file_path: str, parser, dynamic_options: dict[str, str]) ->
 
             clean_line = clean_output_line(line)
             out.writeln(
-                f"  \033[38;2;74;85;104m│\033[0m  "
-                f"{out.styled(server_name, fg=color)}  {clean_line}"
+                f"  \033[38;2;74;85;104m│\033[0m  {out.styled(server_name, fg=color)}  {clean_line}"
             )
 
         elapsed = format_duration(time.monotonic() - task_start_time)
@@ -301,7 +295,9 @@ def handle_run(args, file_path: str, parser, dynamic_options: dict[str, str]) ->
         if pretend:
             for output_text in result.outputs.values():
                 out.writeln(output_text)
-            timings.append([task.display_name_with_emoji(), servers, "-", "\033[38;2;74;85;104mpretend\033[0m"])
+            timings.append(
+                [task.display_name_with_emoji(), servers, "-", "\033[38;2;74;85;104mpretend\033[0m"]
+            )
             out.writeln()
             return
 
@@ -370,14 +366,9 @@ def handle_run(args, file_path: str, parser, dynamic_options: dict[str, str]) ->
             )
             out.writeln()
         else:
-            failed_task = next(
-                (name for name, r in results.items() if not r.succeeded()), None
-            )
+            failed_task = next((name for name, r in results.items() if not r.succeeded()), None)
             t = current_local_time()
-            out.writeln(
-                f"  \033[31;1m✗ Failed at {failed_task}\033[0m "
-                f"\033[90m({t})\033[0m"
-            )
+            out.writeln(f"  \033[31;1m✗ Failed at {failed_task}\033[0m \033[90m({t})\033[0m")
             out.writeln()
 
     return 1 if failed else 0

@@ -38,9 +38,7 @@ def handle_tasks(args, file_path: str, parser) -> int:
             parallel = " \033[36mparallel\033[0m" if task.parallel else ""
             display_name = task.display_name_with_emoji()
 
-            out.writeln(
-                f"  {display_name}  \033[38;2;74;85;104mon {servers}\033[0m{parallel}"
-            )
+            out.writeln(f"  {display_name}  \033[38;2;74;85;104mon {servers}\033[0m{parallel}")
 
         out.writeln()
 

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-import sys
 
 from scotty.parsing.models import ServerDefinition
 from scotty.ui import output as out
@@ -37,16 +36,12 @@ def handle_ssh(args, file_path: str, parser) -> int:
         if len(server.hosts) == 1:
             host = server.hosts[0]
         else:
-            filtered = {
-                k: v for k, v in host_options.items() if v in server.hosts
-            }
+            filtered = {k: v for k, v in host_options.items() if v in server.hosts}
             selected = select(label="Which host?", options=list(filtered.keys()))
             host = filtered[selected]
     else:
         remote_options = {
-            k: v
-            for k, v in host_options.items()
-            if not ServerDefinition.is_local_host(v)
+            k: v for k, v in host_options.items() if not ServerDefinition.is_local_host(v)
         }
 
         if not remote_options:
@@ -56,9 +51,7 @@ def handle_ssh(args, file_path: str, parser) -> int:
         if len(remote_options) == 1:
             selected = next(iter(remote_options))
         else:
-            selected = select(
-                label="Which server?", options=list(remote_options.keys())
-            )
+            selected = select(label="Which server?", options=list(remote_options.keys()))
 
         host = remote_options[selected]
 

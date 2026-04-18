@@ -137,7 +137,9 @@ class BashParser:
             preceding_start = max(0, offset - 200)
             preceding = content[preceding_start:offset]
 
-            if re.search(r"#\s*@(task|before|after|success|error|finished)\b[^\n]*\n\s*$", preceding):
+            if re.search(
+                r"#\s*@(task|before|after|success|error|finished)\b[^\n]*\n\s*$", preceding
+            ):
                 continue
 
             body_start = m.end()

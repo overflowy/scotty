@@ -44,9 +44,7 @@ class TaskRunner:
         result.duration = time.monotonic() - start_time
         return result
 
-    def _resolve_server_map(
-        self, task: TaskDefinition, config: ParseResult
-    ) -> dict[str, str]:
+    def _resolve_server_map(self, task: TaskDefinition, config: ParseResult) -> dict[str, str]:
         server_map: dict[str, str] = {}
 
         for server_name in task.servers:
@@ -68,9 +66,7 @@ class TaskRunner:
         processes: dict[str, subprocess.Popen] = {}
 
         for name, host in server_map.items():
-            command, full_env, shell = self.command_builder.build_process_args(
-                host, script, env
-            )
+            command, full_env, shell = self.command_builder.build_process_args(host, script, env)
             processes[name] = subprocess.Popen(
                 command,
                 shell=shell,
@@ -115,9 +111,7 @@ class TaskRunner:
             if host_exit_code != 0 and failed_host is None:
                 failed_host = name
 
-        return TaskResult(
-            exit_code=exit_code, outputs=outputs, failed_host=failed_host
-        )
+        return TaskResult(exit_code=exit_code, outputs=outputs, failed_host=failed_host)
 
     def _run_parallel(
         self,
@@ -143,9 +137,7 @@ class TaskRunner:
             if host_exit_code != 0 and failed_host is None:
                 failed_host = name
 
-        return TaskResult(
-            exit_code=exit_code, outputs=outputs, failed_host=failed_host
-        )
+        return TaskResult(exit_code=exit_code, outputs=outputs, failed_host=failed_host)
 
     def _gather_output(
         self,

@@ -35,7 +35,9 @@ def resolve_file_path(path_opt: str | None = None, conf_opt: str | None = None) 
     return None
 
 
-def resolve_file_path_or_fail(path_opt: str | None = None, conf_opt: str | None = None) -> str | None:
+def resolve_file_path_or_fail(
+    path_opt: str | None = None, conf_opt: str | None = None
+) -> str | None:
     file_path = resolve_file_path(path_opt, conf_opt)
 
     if file_path is not None:
@@ -97,11 +99,17 @@ def main() -> None:
     # run
     run_parser = subparsers.add_parser("run", help="Run a task or macro")
     run_parser.add_argument("task", help="The task or macro to run")
-    run_parser.add_argument("--continue", dest="continue_on_error", action="store_true", help="Continue on failure")
-    run_parser.add_argument("--pretend", action="store_true", help="Dump the script instead of running it")
+    run_parser.add_argument(
+        "--continue", dest="continue_on_error", action="store_true", help="Continue on failure"
+    )
+    run_parser.add_argument(
+        "--pretend", action="store_true", help="Dump the script instead of running it"
+    )
     run_parser.add_argument("--path", default=None, help="Path to the Scotty file")
     run_parser.add_argument("--conf", default=None, help="Scotty filename")
-    run_parser.add_argument("--summary", action="store_true", help="Only show task results, hide output")
+    run_parser.add_argument(
+        "--summary", action="store_true", help="Only show task results, hide output"
+    )
 
     # tasks
     tasks_parser = subparsers.add_parser("tasks", help="List all available tasks and macros")
@@ -159,9 +167,7 @@ def main() -> None:
         sys.exit(handle_tasks(args, file_path, p))
 
     if args.command == "doctor":
-        file_path = resolve_file_path(
-            getattr(args, "path", None), getattr(args, "conf", None)
-        )
+        file_path = resolve_file_path(getattr(args, "path", None), getattr(args, "conf", None))
 
         from scotty.commands.doctor import handle_doctor
 

@@ -26,9 +26,7 @@ class SshCommandBuilder:
         command = self._build_ssh_command(target, script, env)
         return command, os.environ.copy(), True  # shell=True
 
-    def build_command(
-        self, host: str, script: str, env: dict[str, str] | None = None
-    ) -> str:
+    def build_command(self, host: str, script: str, env: dict[str, str] | None = None) -> str:
         env = dict(env or {})
         env["ENVOY_HOST"] = host
         target = self._resolve_host(host)
@@ -46,9 +44,7 @@ class SshCommandBuilder:
 
         return self._ssh_config.find_configured_host(host) or host
 
-    def _build_ssh_command(
-        self, target: str, script: str, env: dict[str, str]
-    ) -> str:
+    def _build_ssh_command(self, target: str, script: str, env: dict[str, str]) -> str:
         delimiter = "EOF-SCOTTY"
 
         exports = []

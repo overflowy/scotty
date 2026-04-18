@@ -1,13 +1,12 @@
 from __future__ import annotations
 
+import re
 import shlex
 import subprocess
-import re
 import time
 
 from scotty.parsing.parse_result import ParseResult
 from scotty.ui import output as out
-
 
 SSH_TIMEOUT = 5
 REMOTE_TOOLS_TIMEOUT = 10
@@ -18,7 +17,9 @@ def handle_doctor(args, file_path: str | None, parser_factory) -> int:
 
     out.writeln()
     out.writeln("  \033[1mScotty Doctor\033[0m")
-    out.writeln("  \033[38;2;74;85;104mChecking your configuration, servers, and remote tools.\033[0m")
+    out.writeln(
+        "  \033[38;2;74;85;104mChecking your configuration, servers, and remote tools.\033[0m"
+    )
     out.writeln()
 
     if file_path is None:
@@ -107,9 +108,7 @@ def _find_invalid_macro_references(config: ParseResult) -> list[str]:
     for macro in config.macros.values():
         for task_name in macro.tasks:
             if config.get_task(task_name) is None:
-                invalid.append(
-                    f'Macro "{macro.name}" references undefined task "{task_name}"'
-                )
+                invalid.append(f'Macro "{macro.name}" references undefined task "{task_name}"')
     return invalid
 
 
@@ -118,9 +117,7 @@ def _check_ssh_connectivity(name: str, host: str) -> bool:
     command = f"ssh -o ConnectTimeout=5 -o BatchMode=yes {shlex.quote(host)} 'echo ok'"
 
     try:
-        result = subprocess.run(
-            command, shell=True, capture_output=True, timeout=SSH_TIMEOUT
-        )
+        result = subprocess.run(command, shell=True, capture_output=True, timeout=SSH_TIMEOUT)
     except subprocess.TimeoutExpired:
         _write_failure(f"{name} ({host}) — connection timed out")
         return False
@@ -138,13 +135,15 @@ def _check_remote_tools(name: str, host: str) -> None:
     out.writeln(f"  \033[1mRemote tools on {name}\033[0m")
     out.writeln(f"  \033[38;2;74;85;104mChecking which tools are available on {host}.\033[0m")
 
-    tool_check_script = "; ".join([
-        "php -v 2>/dev/null | head -1",
-        "composer --version 2>/dev/null",
-        "node -v 2>/dev/null",
-        "npm -v 2>/dev/null",
-        "git --version 2>/dev/null",
-    ])
+    tool_check_script = "; ".join(
+        [
+            "php -v 2>/dev/null | head -1",
+            "composer --version 2>/dev/null",
+            "node -v 2>/dev/null",
+            "npm -v 2>/dev/null",
+            "git --version 2>/dev/null",
+        ]
+    )
 
     command = f"ssh -o ConnectTimeout=5 -o BatchMode=yes {shlex.quote(host)} '{tool_check_script}'"
 

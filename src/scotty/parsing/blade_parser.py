@@ -45,9 +45,7 @@ class BladeParser:
         self._check_unsupported_php(setup_body)
 
         # Parse array assignments: $var = ['val1', 'val2'];
-        for arr_m in re.finditer(
-            r"\$(\w+)\s*=\s*\[(.*?)\]\s*;", setup_body, re.DOTALL
-        ):
+        for arr_m in re.finditer(r"\$(\w+)\s*=\s*\[(.*?)\]\s*;", setup_body, re.DOTALL):
             var_name = arr_m.group(1)
             array_content = arr_m.group(2)
             items = re.findall(r"'([^']*)'", array_content)
