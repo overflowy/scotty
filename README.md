@@ -2,7 +2,7 @@
 
 A beautiful SSH task runner. Write your deploy steps in plain bash with a few annotation comments, and Scotty takes care of connecting to your servers, running each script, and streaming the output back to you.
 
-This is a Python port of Spatie's Scotty. Only the `Scotty.sh` bash-with-annotations format is supported — Laravel Envoy's Blade format is not.
+This is a Python port of Spatie's Scotty. Only the `Scotty.sh` bash-with-annotations format is supported - Laravel Envoy's Blade format is not.
 
 ## Why
 
@@ -79,7 +79,7 @@ You can define as many as you need:
 # @servers local=127.0.0.1 web-1=deployer@1.1.1.1 web-2=deployer@2.2.2.2
 ```
 
-`127.0.0.1`, `localhost`, and `local` are all treated as the local machine — Scotty skips SSH entirely for them.
+`127.0.0.1`, `localhost`, and `local` are all treated as the local machine - Scotty skips SSH entirely for them.
 
 ### Tasks
 
@@ -192,7 +192,7 @@ deploy() {
 
 ### Hooks
 
-You can run code at different points during execution — useful for notifications, logging, etc:
+You can run code at different points during execution - useful for notifications, logging, etc:
 
 ```sh
 # @before
@@ -330,6 +330,22 @@ When you run a command without `--path` or `--conf`, Scotty looks for the follow
 
 It uses the first one it finds. Pass `--path=path/to/file.sh` or `--conf=Custom.sh` to point somewhere else.
 
+## Copying files to a remote
+
+Scotty doesn't have a built-in file-transfer primitive - every task is just bash. The idiomatic pattern is `rsync` from an `on:local` task, which handles deltas, permissions, and directory trees in one shot:
+
+```sh
+REMOTE_HOST="deployer@your-server.com"
+APP_DIR="/var/www/my-app"
+
+# @task on:local
+uploadAssets() {
+    rsync -az --delete public/build/ $REMOTE_HOST:$APP_DIR/public/build/
+}
+```
+
+`scp` is fine for one-off single files, but `rsync -az` should be your default - it's faster on re-uploads and `--delete` keeps the remote tree in sync. Tar-over-ssh (`tar c dir/ | ssh $REMOTE_HOST 'tar x -C /path'`) is only worth it when rsync isn't installed on the remote.
+
 ## Complete example
 
 ```sh
@@ -398,12 +414,12 @@ Tests live in `tests/`. Unit tests cover the parser, models, and SSH command bui
 ## Notes on this port
 
 - Laravel Envoy compatibility was dropped. Neither the Blade (`Envoy.blade.php`) format nor auto-discovery of `Envoy.sh` is supported.
-- `scotty doctor` checks `node`, `npm`, and `git` on remotes — no PHP/Composer probes.
+- `scotty doctor` checks `node`, `npm`, and `git` on remotes - no PHP/Composer probes.
 - Environment variables injected into the remote script via `--key=value` are `shlex`-quoted, so values containing `"`, `$`, spaces, etc. are passed through literally.
 
 ## Credits
 
-This project is a Python port of [Spatie's Scotty](https://github.com/spatie/scotty) by [Spatie](https://spatie.be). The original is licensed under MIT. The `Scotty.sh` format, CLI ergonomics, and output design are all their work — this port reimplements those ideas in Python.
+This project is a Python port of [Spatie's Scotty](https://github.com/spatie/scotty) by [Spatie](https://spatie.be). The original is licensed under MIT. The `Scotty.sh` format, CLI ergonomics, and output design are all their work - this port reimplements those ideas in Python.
 
 ## License
 
