@@ -15,8 +15,12 @@ def styled(text: str, *, fg: str = "", bold: bool = False) -> str:
             codes.append(f"38;2;{r};{g};{b}")
         else:
             color_map = {
-                "red": "31", "green": "32", "yellow": "33",
-                "blue": "34", "magenta": "35", "cyan": "36",
+                "red": "31",
+                "green": "32",
+                "yellow": "33",
+                "blue": "34",
+                "magenta": "35",
+                "cyan": "36",
                 "gray": "90",
             }
             if fg in color_map:

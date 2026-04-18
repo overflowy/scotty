@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import sys
 
-
 SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
 HINTS = "  \033[38;2;74;85;104mp pause  ^C quit\033[0m"
 

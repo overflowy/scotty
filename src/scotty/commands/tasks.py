@@ -15,7 +15,7 @@ def handle_tasks(args, file_path: str) -> int:
         out.writeln()
 
         for name in available["macros"]:
-            macro = config.get_macro(name)
+            macro = config.macros[name]
             task_list = []
             for task_name in macro.tasks:
                 task = config.get_task(task_name)
@@ -34,7 +34,7 @@ def handle_tasks(args, file_path: str) -> int:
         out.writeln()
 
         for name in available["tasks"]:
-            task = config.get_task(name)
+            task = config.tasks[name]
             servers = ", ".join(task.servers)
             parallel = " \033[36mparallel\033[0m" if task.parallel else ""
             display_name = task.display_name_with_emoji()
