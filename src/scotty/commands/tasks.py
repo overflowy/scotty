@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+from scotty.parsing.bash_parser import BashParser
 from scotty.ui import output as out
 
 
-def handle_tasks(args, file_path: str, parser) -> int:
-    config = parser.parse(file_path)
+def handle_tasks(args, file_path: str) -> int:
+    config = BashParser().parse(file_path)
     available = config.available_targets()
 
     out.writeln()

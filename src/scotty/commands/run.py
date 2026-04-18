@@ -9,6 +9,7 @@ import time
 
 from scotty.execution.executor import Executor
 from scotty.execution.task_result import TaskResult
+from scotty.parsing.bash_parser import BashParser
 from scotty.parsing.models import TaskDefinition
 from scotty.parsing.parse_result import ParseResult
 from scotty.ui import output as out
@@ -19,8 +20,8 @@ TRACE_MARKER = "ENVOY_TRACE:"
 COLORS = ["yellow", "cyan", "magenta", "blue", "green"]
 
 
-def handle_run(args, file_path: str, parser, dynamic_options: dict[str, str]) -> int:
-    config = parser.parse(file_path, dynamic_options)
+def handle_run(args, file_path: str, dynamic_options: dict[str, str]) -> int:
+    config = BashParser().parse(file_path, dynamic_options)
 
     target = args.task
     tasks = config.resolve_tasks_for_target(target)

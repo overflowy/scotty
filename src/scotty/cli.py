@@ -5,19 +5,13 @@ import os
 import re
 import sys
 
-from scotty.parsing.bash_parser import BashParser
-from scotty.parsing.blade_parser import BladeParser
 from scotty.ui.banner import render_banner
 
 SCOTTY_FILENAMES = [
     "Scotty.sh",
     "scotty.sh",
-    "Scotty.blade.php",
-    "scotty.blade.php",
     "Envoy.sh",
     "envoy.sh",
-    "Envoy.blade.php",
-    "envoy.blade.php",
 ]
 
 
@@ -52,12 +46,6 @@ def resolve_file_path_or_fail(
     out.writeln("  Run `scotty init` to create one.")
 
     return None
-
-
-def resolve_parser(file_path: str):
-    if file_path.lower().endswith(".sh"):
-        return BashParser()
-    return BladeParser()
 
 
 def gather_dynamic_options() -> dict[str, str]:
@@ -131,7 +119,7 @@ def main() -> None:
     ssh_parser.add_argument("--conf", default=None, help="Scotty filename")
 
     # Use parse_known_args to allow dynamic --key=value options
-    args, unknown = parser.parse_known_args()
+    args, _ = parser.parse_known_args()
 
     if args.command is None:
         render_banner()
@@ -148,38 +136,31 @@ def main() -> None:
         if file_path is None:
             sys.exit(1)
 
-        p = resolve_parser(file_path)
-        dynamic_options = gather_dynamic_options()
-
         from scotty.commands.run import handle_run
 
-        sys.exit(handle_run(args, file_path, p, dynamic_options))
+        sys.exit(handle_run(args, file_path, gather_dynamic_options()))
 
     if args.command == "tasks":
         file_path = resolve_file_path_or_fail(args.path, args.conf)
         if file_path is None:
             sys.exit(1)
 
-        p = resolve_parser(file_path)
-
         from scotty.commands.tasks import handle_tasks
 
-        sys.exit(handle_tasks(args, file_path, p))
+        sys.exit(handle_tasks(args, file_path))
 
     if args.command == "doctor":
         file_path = resolve_file_path(getattr(args, "path", None), getattr(args, "conf", None))
 
         from scotty.commands.doctor import handle_doctor
 
-        sys.exit(handle_doctor(args, file_path, resolve_parser))
+        sys.exit(handle_doctor(args, file_path))
 
     if args.command == "ssh":
         file_path = resolve_file_path_or_fail(args.path, args.conf)
         if file_path is None:
             sys.exit(1)
 
-        p = resolve_parser(file_path)
-
         from scotty.commands.ssh import handle_ssh
 
-        sys.exit(handle_ssh(args, file_path, p))
+        sys.exit(handle_ssh(args, file_path))

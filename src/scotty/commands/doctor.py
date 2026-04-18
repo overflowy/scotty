@@ -5,6 +5,7 @@ import shlex
 import subprocess
 import time
 
+from scotty.parsing.bash_parser import BashParser
 from scotty.parsing.parse_result import ParseResult
 from scotty.ui import output as out
 
@@ -12,7 +13,7 @@ SSH_TIMEOUT = 5
 REMOTE_TOOLS_TIMEOUT = 10
 
 
-def handle_doctor(args, file_path: str | None, parser_factory) -> int:
+def handle_doctor(args, file_path: str | None) -> int:
     has_failures = False
 
     out.writeln()
@@ -29,8 +30,7 @@ def handle_doctor(args, file_path: str | None, parser_factory) -> int:
     _write_success(f"Scotty file found ({file_path})")
 
     try:
-        parser = parser_factory(file_path)
-        config = parser.parse(file_path)
+        config = BashParser().parse(file_path)
     except Exception as e:
         _write_failure(f"File parsing failed: {e}")
         return 1

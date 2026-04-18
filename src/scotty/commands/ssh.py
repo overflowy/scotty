@@ -2,13 +2,14 @@ from __future__ import annotations
 
 import os
 
+from scotty.parsing.bash_parser import BashParser
 from scotty.parsing.models import ServerDefinition
 from scotty.ui import output as out
 from scotty.ui.prompts import select
 
 
-def handle_ssh(args, file_path: str, parser) -> int:
-    config = parser.parse(file_path)
+def handle_ssh(args, file_path: str) -> int:
+    config = BashParser().parse(file_path)
     servers = config.servers
 
     if not servers:
