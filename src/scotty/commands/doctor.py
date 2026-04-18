@@ -137,8 +137,6 @@ def _check_remote_tools(name: str, host: str) -> None:
 
     tool_check_script = "; ".join(
         [
-            "php -v 2>/dev/null | head -1",
-            "composer --version 2>/dev/null",
             "node -v 2>/dev/null",
             "npm -v 2>/dev/null",
             "git --version 2>/dev/null",
@@ -158,8 +156,6 @@ def _check_remote_tools(name: str, host: str) -> None:
     output = result.stdout.strip()
     lines = output.split("\n") if output else []
 
-    _report_tool("php", _extract_version(lines, r"^PHP (\d+\.\d+\.\d+)"))
-    _report_tool("composer", _extract_version(lines, r"Composer.*?(\d+\.\d+\.\d+)"))
     _report_tool("node", _extract_version(lines, r"^v(\d+\.\d+\.\d+)"))
     _report_tool("npm", _extract_version(lines, r"^(\d+\.\d+\.\d+)$"))
     _report_tool("git", _extract_version(lines, r"git version (\d+\.\d+\.\d+)"))
