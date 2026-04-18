@@ -74,3 +74,8 @@ def test_build_command_quotes_values_with_special_chars(builder):
 def test_build_command_includes_set_minus_e(builder):
     command = builder.build_command("forge@1.1.1.1", 'echo "hello"')
     assert "set -e" in command
+
+
+def test_build_command_exports_scotty_host(builder):
+    command = builder.build_command("forge@1.1.1.1", 'echo "hi"')
+    assert "export SCOTTY_HOST=forge@1.1.1.1" in command

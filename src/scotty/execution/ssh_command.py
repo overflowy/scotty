@@ -17,7 +17,7 @@ class SshCommandBuilder:
         self, host: str, script: str, env: dict[str, str] | None = None
     ) -> tuple[list[str] | str, dict[str, str], bool]:
         env = dict(env or {})
-        env["ENVOY_HOST"] = host
+        env["SCOTTY_HOST"] = host
         target = self._resolve_host(host)
 
         if ServerDefinition.is_local_host(target):
@@ -29,7 +29,7 @@ class SshCommandBuilder:
 
     def build_command(self, host: str, script: str, env: dict[str, str] | None = None) -> str:
         env = dict(env or {})
-        env["ENVOY_HOST"] = host
+        env["SCOTTY_HOST"] = host
         target = self._resolve_host(host)
 
         if ServerDefinition.is_local_host(target):

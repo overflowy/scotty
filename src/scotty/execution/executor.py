@@ -83,7 +83,7 @@ class Executor:
             escaped_value = shlex.quote(value)
             preamble += f"\n{upper_key}={escaped_value}"
 
-        debug_trap = "trap 'echo \"ENVOY_TRACE:$BASH_COMMAND\" >&2' DEBUG"
+        debug_trap = "trap 'echo \"SCOTTY_TRACE:$BASH_COMMAND\" >&2' DEBUG"
 
         preamble = preamble.strip()
         preamble = f"{preamble}\n{debug_trap}" if preamble else debug_trap

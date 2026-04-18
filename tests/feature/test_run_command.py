@@ -51,3 +51,20 @@ def test_errors_when_no_file_found(tmp_path):
 
     assert result.returncode == 1
     assert "No Scotty file found" in result.stdout
+
+
+def test_errors_friendly_on_macro_with_missing_task(tmp_path):
+    scotty_file = tmp_path / "Scotty.sh"
+    scotty_file.write_text(
+        "# @servers local=127.0.0.1\n"
+        "# @macro deploy pull ghost\n"
+        "\n"
+        "# @task on:local\n"
+        "pull() { echo hi; }\n"
+    )
+
+    result = _run_scotty("deploy", "--conf", str(scotty_file))
+
+    assert result.returncode == 1
+    assert "ghost" in result.stdout
+    assert "undefined" in result.stdout

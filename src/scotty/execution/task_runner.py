@@ -106,10 +106,11 @@ class TaskRunner:
             self._gather_output({name: process}, outputs, on_output)
 
             host_exit_code = process.returncode or 0
-            exit_code += host_exit_code
-
-            if host_exit_code != 0 and failed_host is None:
-                failed_host = name
+            if host_exit_code != 0:
+                if failed_host is None:
+                    failed_host = name
+                if exit_code == 0:
+                    exit_code = host_exit_code
 
         return TaskResult(exit_code=exit_code, outputs=outputs, failed_host=failed_host)
 
@@ -133,9 +134,11 @@ class TaskRunner:
         exit_code = 0
         for name, process in processes.items():
             host_exit_code = process.returncode or 0
-            exit_code += host_exit_code
-            if host_exit_code != 0 and failed_host is None:
-                failed_host = name
+            if host_exit_code != 0:
+                if failed_host is None:
+                    failed_host = name
+                if exit_code == 0:
+                    exit_code = host_exit_code
 
         return TaskResult(exit_code=exit_code, outputs=outputs, failed_host=failed_host)
 

@@ -128,18 +128,12 @@ class BashParser:
         return preamble
 
     def _extract_helper_functions(self, content: str) -> str:
+        annotated = self._annotated_function_names(content)
         functions: list[str] = []
 
         for m in re.finditer(r"^(\w+)\(\)\s*\{", content, re.MULTILINE):
             function_name = m.group(1)
-            offset = m.start()
-
-            preceding_start = max(0, offset - 200)
-            preceding = content[preceding_start:offset]
-
-            if re.search(
-                r"#\s*@(task|before|after|success|error|finished)\b[^\n]*\n\s*$", preceding
-            ):
+            if function_name in annotated:
                 continue
 
             body_start = m.end()
@@ -147,6 +141,19 @@ class BashParser:
             functions.append(f"{function_name}() {{\n{body}\n}}")
 
         return "\n\n".join(functions)
+
+    def _annotated_function_names(self, content: str) -> set[str]:
+        names: set[str] = set()
+
+        for m in re.finditer(r"^#\s*@task\s+.+$\n(\w+)\(\)", content, re.MULTILINE):
+            names.add(m.group(1))
+
+        for hook_type in HookType:
+            pattern = rf"^#\s*@{hook_type.value}\s*$\n(\w+)\(\)"
+            for m in re.finditer(pattern, content, re.MULTILINE):
+                names.add(m.group(1))
+
+        return names
 
     def _extract_function_body(self, content: str, start_offset: int) -> str:
         depth = 1

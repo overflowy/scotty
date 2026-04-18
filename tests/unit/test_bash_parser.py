@@ -343,6 +343,31 @@ def test_parses_emoji_annotation(parser, tmp_path):
     assert result.get_task("noEmoji").emoji is None
 
 
+def test_long_comment_above_task_does_not_misclassify_it_as_helper(parser, tmp_path):
+    path = _write(
+        tmp_path,
+        "long_comment.sh",
+        """\
+        # @servers local=127.0.0.1
+
+        # This is a deliberately very long comment block that pushes the @task
+        # annotation more than 200 characters away from the function definition,
+        # which used to trip up the helper-function detection heuristic that
+        # looked back a fixed number of characters to find annotations. With the
+        # name-based detection, this comment does not affect classification.
+        # @task on:local
+        deploy() {
+            echo "deploying"
+        }
+        """,
+    )
+
+    result = parser.parse(path)
+
+    assert result.get_task("deploy") is not None
+    assert "deploy()" not in result.variable_preamble
+
+
 def test_empty_file_produces_empty_result(parser, tmp_path):
     path = tmp_path / "empty.sh"
     path.write_text("")

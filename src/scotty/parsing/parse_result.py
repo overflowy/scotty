@@ -31,13 +31,19 @@ class ParseResult:
     def resolve_tasks_for_target(self, name: str) -> list[TaskDefinition]:
         macro = self.get_macro(name)
         if macro is not None:
-            return [self.tasks[task_name] for task_name in macro.tasks]
+            return [self.tasks[n] for n in macro.tasks if n in self.tasks]
 
         task = self.get_task(name)
         if task is not None:
             return [task]
 
         return []
+
+    def missing_macro_tasks(self, name: str) -> list[str]:
+        macro = self.get_macro(name)
+        if macro is None:
+            return []
+        return [n for n in macro.tasks if n not in self.tasks]
 
     def get_hooks(self, hook_type: HookType) -> list[HookDefinition]:
         return [h for h in self.hooks if h.type == hook_type]

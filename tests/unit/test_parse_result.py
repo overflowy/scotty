@@ -103,3 +103,28 @@ def test_available_targets_lists_tasks_and_macros(result):
     targets = result.available_targets()
     assert targets["tasks"] == ["pull", "build", "restart"]
     assert targets["macros"] == ["deploy"]
+
+
+def test_missing_macro_tasks_reports_undefined_references():
+    result = ParseResult(
+        tasks={"pull": TaskDefinition("pull", "", ["remote"])},
+        macros={"deploy": MacroDefinition("deploy", ["pull", "ghost", "alsoGhost"])},
+    )
+    assert result.missing_macro_tasks("deploy") == ["ghost", "alsoGhost"]
+
+
+def test_missing_macro_tasks_returns_empty_for_valid_macro(result):
+    assert result.missing_macro_tasks("deploy") == []
+
+
+def test_missing_macro_tasks_returns_empty_for_unknown_target(result):
+    assert result.missing_macro_tasks("nonexistent") == []
+
+
+def test_resolve_tasks_for_target_skips_missing_macro_entries():
+    result = ParseResult(
+        tasks={"pull": TaskDefinition("pull", "", ["remote"])},
+        macros={"deploy": MacroDefinition("deploy", ["pull", "ghost"])},
+    )
+    tasks = result.resolve_tasks_for_target("deploy")
+    assert [t.name for t in tasks] == ["pull"]

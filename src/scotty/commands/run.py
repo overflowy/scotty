@@ -15,7 +15,7 @@ from scotty.parsing.parse_result import ParseResult
 from scotty.ui import output as out
 from scotty.ui.spinner import Spinner
 
-TRACE_MARKER = "ENVOY_TRACE:"
+TRACE_MARKER = "SCOTTY_TRACE:"
 
 COLORS = ["yellow", "cyan", "magenta", "blue", "green"]
 
@@ -24,6 +24,12 @@ def handle_run(args, file_path: str, dynamic_options: dict[str, str]) -> int:
     config = BashParser().parse(file_path, dynamic_options)
 
     target = args.task
+
+    missing = config.missing_macro_tasks(target)
+    if missing:
+        out.error(f'Macro "{target}" references undefined task(s): {", ".join(missing)}')
+        return 1
+
     tasks = config.resolve_tasks_for_target(target)
 
     if not tasks:
