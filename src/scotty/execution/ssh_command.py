@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import shlex
 from pathlib import Path
 
 from scotty.parsing.models import ServerDefinition
@@ -50,7 +51,7 @@ class SshCommandBuilder:
         exports = []
         for key, value in env.items():
             if value:
-                exports.append(f'export {key}="{value}"')
+                exports.append(f"export {key}={shlex.quote(value)}")
 
         parts = [
             f"ssh {target} 'bash -se' << \\{delimiter}",
