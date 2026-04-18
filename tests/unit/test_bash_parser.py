@@ -32,6 +32,27 @@ def test_parses_servers(parser, fixtures_path):
     assert result.servers["staging"].hosts == ["forge@staging.example.com"]
 
 
+def test_parses_server_names_with_hyphens(parser, tmp_path):
+    path = _write(
+        tmp_path,
+        "dashed_servers.sh",
+        """\
+        # @servers local=127.0.0.1 web-1=deployer@web-1.example.com web-2=deployer@web-2.example.com
+
+        # @task on:web-1,web-2
+        restart() {
+            echo restarting
+        }
+        """,
+    )
+
+    result = parser.parse(path)
+
+    assert set(result.servers.keys()) == {"local", "web-1", "web-2"}
+    assert result.servers["web-1"].hosts == ["deployer@web-1.example.com"]
+    assert result.servers["web-2"].hosts == ["deployer@web-2.example.com"]
+
+
 def test_parses_single_line_macros(parser, fixtures_path):
     result = parser.parse(str(fixtures_path / "complete.sh"))
 

@@ -32,7 +32,7 @@ class BashParser:
 
         m = re.search(r"^#\s*@servers\s+(.+)$", content, re.MULTILINE)
         if m:
-            for pair in re.finditer(r"(\w+)=(\S+)", m.group(1)):
+            for pair in re.finditer(r"([\w-]+)=(\S+)", m.group(1)):
                 name = pair.group(1)
                 servers[name] = ServerDefinition(name, pair.group(2))
 
