@@ -1,8 +1,12 @@
 from __future__ import annotations
 
 import re
-import shlex
 import textwrap
+
+
+def _escape_shell_arg(value: str) -> str:
+    """PHP's escapeshellarg: always single-quote-wrap, escape embedded quotes."""
+    return "'" + value.replace("'", "'\\''") + "'"
 
 from scotty.parsing.models import (
     HookDefinition,
@@ -118,7 +122,7 @@ class BashParser:
 
         for key, value in cli_data.items():
             upper_key = key.upper()
-            lines.append(f"{upper_key}='{value}'")
+            lines.append(f"{upper_key}={_escape_shell_arg(value)}")
 
         preamble = "\n".join(lines)
 

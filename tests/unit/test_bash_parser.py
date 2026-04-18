@@ -364,6 +364,23 @@ def test_parses_emoji_annotation(parser, tmp_path):
     assert result.get_task("noEmoji").emoji is None
 
 
+def test_cli_values_with_single_quotes_are_escaped(parser, tmp_path):
+    path = _write(
+        tmp_path,
+        "quoted.sh",
+        """\
+        # @servers local=127.0.0.1
+
+        # @task on:local
+        deploy() { echo $MSG; }
+        """,
+    )
+
+    result = parser.parse(path, {"msg": "it's fine"})
+
+    assert "MSG='it'\\''s fine'" in result.variable_preamble
+
+
 def test_long_comment_above_task_does_not_misclassify_it_as_helper(parser, tmp_path):
     path = _write(
         tmp_path,
