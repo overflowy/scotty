@@ -1,0 +1,12 @@
+version = 1
+revision = 3
+requires-python = ">=3.13"
+
+[options]
+exclude-newer = "2026-04-11T17:54:48.069688Z"
+exclude-newer-span = "P1W"
+
+[[package]]
+name = "scotty"
+version = "0.1.0"
+source = { editable = "." }
