@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import sys
+import unicodedata
 
 
 def styled(text: str, *, fg: str = "", bold: bool = False) -> str:
@@ -27,6 +28,18 @@ def styled(text: str, *, fg: str = "", bold: bool = False) -> str:
 
 def strip_ansi(text: str) -> str:
     return re.sub(r"\033\[[0-9;]*m", "", text)
+
+
+def display_width(text: str) -> int:
+    width = 0
+    for ch in strip_ansi(text):
+        if unicodedata.category(ch) in ("Mn", "Me", "Cf"):
+            continue
+        if unicodedata.east_asian_width(ch) in ("W", "F") or ord(ch) >= 0x1F000:
+            width += 2
+        else:
+            width += 1
+    return width
 
 
 def write(text: str) -> None:
@@ -60,14 +73,15 @@ def table(headers: list[str], rows: list[list[str]]) -> None:
     col_widths = [0] * len(headers)
     for row in all_rows:
         for i, cell in enumerate(row):
-            col_widths[i] = max(col_widths[i], len(strip_ansi(cell)))
+            col_widths[i] = max(col_widths[i], display_width(cell))
 
     writeln()
 
     # Header
     header_parts = []
     for i, header in enumerate(headers):
-        header_parts.append(f" {header:<{col_widths[i]}} ")
+        padding = col_widths[i] - display_width(header)
+        header_parts.append(f" {header}{' ' * padding} ")
     writeln("  " + styled("|".join(header_parts), bold=True))
 
     # Separator
@@ -78,7 +92,7 @@ def table(headers: list[str], rows: list[list[str]]) -> None:
     for row in rows:
         row_parts = []
         for i, cell in enumerate(row):
-            padding = col_widths[i] - len(strip_ansi(cell))
+            padding = col_widths[i] - display_width(cell)
             row_parts.append(f" {cell}{' ' * padding} ")
         writeln("  " + "|".join(row_parts))
 
